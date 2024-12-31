@@ -1,0 +1,30 @@
+This is a "plugin" for the Video Disk Recorder (VDR).
+
+Written by:                  Andreas Regel <andreas.regel@powarman.de>
+
+Project's homepage:          www.powarman.de
+
+Latest version available at: www.powarman.de/vdr_plugins.htm
+
+See the file COPYING for license information.
+
+Description:
+This plugin allows using a Griffin PowerMate to control some of VDR's functions
+through the mapping of remote control keyss to PowerMate actions.
+
+You can specify the PowerMate's device through command line parameter -d
+(default:/dev/input/event0):
+
+  vdr -P'powermate -d /dev/input/event1'
+
+Setup Parameters
+----------------
+Brightness
+    Sets the brightness of PowerMate's LEDs (0-255)
+Sensitivity
+    Sets the sensitivity of PowerMate's turning actions (1-10).
+Use Pushed Turns
+    Controls whether the pushed turn events should be used
+Turn Left, Turn Right, Push Button, Pushed Turn Left, Pushed Turn Right
+    The keys that should be triggered at the different events
+
