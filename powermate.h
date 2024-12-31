@@ -13,20 +13,42 @@
 #define _POWERMATE_H_
 
 #include <vdr/keys.h>
+#include <vdr/status.h>
 #include <vdr/thread.h>
+#include <vdr/tools.h>
 
-class cPowerMate : private cThread
+class cPowerMate : public cThread, cStatus
 {
 private:
-	int fd;
-	bool pushed;
-	virtual void Action();
-	void ProcessEvent(struct input_event * ev);
-	void SendKey(eKeys key);
+    int fd;
+
+    int context;
+    bool menu;
+
+    bool pushed;
+    uint64_t lastPush;
+    int offset;
+    bool click;
+    bool turn;
+
+    bool active;
+
+    virtual void Action();
+    void ProcessInputEvent(struct input_event * ev);
+    void ProcessEvent(int event);
+    void SendKey(eKeys key);
 public:
-	cPowerMate();
-	virtual ~cPowerMate();
-	void SetBrightness(int brightness);
+    cPowerMate();
+    virtual ~cPowerMate();
+    void SetBrightness(int brightness);
+
+    virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
+    virtual void OsdClear(void);
+    virtual void OsdTitle(const char *Title);
+    virtual void OsdHelpKeys(const char *Red, const char *Green, const char *Yellow, const char *Blue);
+    virtual void OsdItem(const char *Text, int Index);
+    virtual void OsdCurrentItem(const char *Text);
+    virtual void OsdTextItem(const char *Text, bool Scroll);
 };
 
 extern cPowerMate * PowerMate;

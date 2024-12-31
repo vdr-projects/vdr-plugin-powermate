@@ -14,43 +14,55 @@
 
 #include <vdr/plugin.h>
 
+
+const int kEvents = 6;
+const int kEventTurnLeft        = 0;
+const int kEventTurnRight       = 1;
+const int kEventPushedTurnLeft  = 2;
+const int kEventPushedTurnRight = 3;
+const int kEventClick           = 4;
+const int kEventDoubleClick     = 5;
+
+const int kContexts = 3;
+const int kContextNormal = 0;
+const int kContextMenu   = 1;
+const int kContextReplay = 2;
+
 class cPowerMateSetup
 {
 public:
-	char device[256];
-	int brightness;
-	int sensitivity;
-	bool usePushedTurns;
-	eKeys keyLeft;
-	eKeys keyRight;
-	eKeys keyPush;
-	eKeys keyPushedLeft;
-	eKeys keyPushedRight;
+    char device[256];
+    int brightness;
+    int sensitivity;
+    int doubleClickTime;
+    eKeys keys[kContexts][kEvents];
 public:
-	cPowerMateSetup();
+    cPowerMateSetup();
+    bool Parse(const char *Name, const char *Value);
 };
 
 class cPowerMateSetupPage : public cMenuSetupPage
 {
 private:
-	char * strKeys[100];
-	int numKeys;
-	int brightness;
-	int sensitivity;
-	int usePushedTurns;
-	int keyLeft;
-	int keyRight;
-	int keyPush;
-	int keyPushedLeft;
-	int keyPushedRight;
+    const char * strKeys[100];
+    const char * strContexts[kContexts];
+    int numKeys;
+    int brightness;
+    int sensitivity;
+    int doubleClickTime;
+    int keys[kContexts][kEvents];
+    int setKeys[kEvents];
+    int context;
+    int contextOld;
 
-	cOsdItem * itemBrightness;
+    cOsdItem * itemBrightness;
+    cOsdItem * itemContext;
 protected:
-	virtual void Store();
-	virtual eOSState ProcessKey(eKeys key);
+    virtual void Store();
+    virtual eOSState ProcessKey(eKeys key);
 public:
-	cPowerMateSetupPage();
-	virtual ~cPowerMateSetupPage();
+    cPowerMateSetupPage();
+    virtual ~cPowerMateSetupPage();
 };
 
 

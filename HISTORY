@@ -1,6 +1,29 @@
 VDR Plugin 'powermate' Revision History
 ---------------------------------------
 
+2008-05-01: Version 0.0.5
+- dropped support for VDR versions older than 1.5.8
+- added localization support using gettext as introduced in VDR 1.5.7
+- added german translations
+
+2008-04-28: Version 0.0.4
+- added support for VDR 1.4 and 1.6 (older versions might work, too)
+- support APIVERSION introduced with vdr 1.3.47
+- replaced uint64 with uint64_t
+- added keys that were introduced with VDR 1.3.18, 1.3.38, 1.3.47 and 1.5.10
+
+2005-12-13: Version 0.0.3
+- added support for VDR version 1.3.18 and later
+- added proper canceling of event task
+- added (int) type casts to support change in the event driver API, that led
+to events not being recognized (p.e. left turning).
+
+2004-06-08: Version 0.0.2
+- new PowerMate event: button double click. The time between two button
+  clicks to be recognized as a double click can be specified in setup menu.
+- context sensitive key bindings: it is now possible to specify different
+  key bindings for the VDR contexts normal, menu and replay.
+
 2003-12-10: Version 0.0.1
 
 - Initial revision.

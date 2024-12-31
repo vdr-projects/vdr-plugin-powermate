@@ -1,0 +1,59 @@
+# powermate plugin language source file.
+# Copyright (C) 2008
+# This file is distributed under the same license as the powermate package.
+# FIRST AUTHOR <andreas.regel@gmx.de>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: powermate 0.0.5\n"
+"Report-Msgid-Bugs-To: <andreas.regel@powarman.de>\n"
+"POT-Creation-Date: 2008-05-01 21:05+0200\n"
+"PO-Revision-Date: 2008-05-01 21:00+0200\n"
+"Last-Translator: root <andreas.regel@powarman.de>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Controls VDR through a Griffin PowerMate"
+msgstr "Steuert VDR mit einem Griffin PowerMate"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "Replay"
+msgstr "Wiedergabe"
+
+msgid "Brightness"
+msgstr "Helligkeit"
+
+msgid "Sensitivity"
+msgstr "Empfindlichkeit"
+
+msgid "Double click time (ms)"
+msgstr "Zeit für Doppelklick (ms)"
+
+msgid "Set keys for context"
+msgstr "Setze Tasten für Kontext"
+
+msgid "Turn Left"
+msgstr "Links drehen"
+
+msgid "Turn Right"
+msgstr "Rechts drehen"
+
+msgid "Pushed Turn Left"
+msgstr "Links drehen (gedrückt)"
+
+msgid "Pushed Turn Right"
+msgstr "Rechts drehen (gedrückt)"
+
+msgid "Button Click"
+msgstr "Klick"
+
+msgid "Button Double Click"
+msgstr "Doppelklick"

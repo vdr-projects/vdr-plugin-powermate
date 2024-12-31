@@ -12,136 +12,209 @@
 #include "powermate.h"
 #include "setup.h"
 
-cPowerMateSetup::cPowerMateSetup()
-:	brightness(0),
-	sensitivity(1),
-	usePushedTurns(false),
-	keyLeft(kNone),
-	keyRight(kNone),
-	keyPush(kNone),
-	keyPushedLeft(kNone),
-	keyPushedRight(kNone)
+const char * kStrContexts[kContexts] =
 {
+    trNOOP("Normal"),
+    trNOOP("Menu"),
+    trNOOP("Replay")
+};
+
+const char * kStrEvents[kEvents] =
+{
+    "TurnLeft",
+    "TurnRight",
+    "PushedTurnLeft",
+    "PushedTurnRight",
+    "Click",
+    "DoubleClick"
+};
+
+cPowerMateSetup::cPowerMateSetup()
+:   brightness(0),
+    sensitivity(1),
+    doubleClickTime(300)
+{
+    for (int c = 0; c < kContexts; c++)
+        for (int e = 0; e < kEvents; e++)
+            keys[c][e] = kNone;
+}
+
+bool cPowerMateSetup::Parse(const char *Name, const char *Value)
+{
+    // Parse your own setup parameters and store their values.
+    if      (!strcasecmp(Name, "Brightness")) brightness = atoi(Value);
+    else if (!strcasecmp(Name, "Sensitivity")) sensitivity = atoi(Value);
+    else if (!strcasecmp(Name, "DoubleClickTime")) doubleClickTime = atoi(Value);
+    else if (strstr(Name, "Key") == Name)
+    {
+        for (int c = 0; c < kContexts; c++)
+        {
+            for (int e = 0; e < kEvents; e++)
+            {
+                char str[256];
+                sprintf(str, "Key%s%s", kStrContexts[c], kStrEvents[e]);
+                if (!strcasecmp(Name, str))
+                {
+                    keys[c][e] = eKeys(atoi(Value));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    else
+        return false;
+    return true;
 }
 
 static tKey keyTable[] = {
-                    { kNone,          "None"       },
-                    { kUp,            "Up"         },
-                    { kDown,          "Down"       },
-                    { kMenu,          "Menu"       },
-                    { kOk,            "Ok"         },
-                    { kBack,          "Back"       },
-                    { kLeft,          "Left"       },
-                    { kRight,         "Right"      },
-                    { kRed,           "Red"        },
-                    { kGreen,         "Green"      },
-                    { kYellow,        "Yellow"     },
-                    { kBlue,          "Blue"       },
-                    { k0,             "0"          },
-                    { k1,             "1"          },
-                    { k2,             "2"          },
-                    { k3,             "3"          },
-                    { k4,             "4"          },
-                    { k5,             "5"          },
-                    { k6,             "6"          },
-                    { k7,             "7"          },
-                    { k8,             "8"          },
-                    { k9,             "9"          },
-                    { kPlay,          "Play"       },
-                    { kPause,         "Pause"      },
-                    { kStop,          "Stop"       },
-                    { kRecord,        "Record"     },
-                    { kFastFwd,       "FastFwd"    },
-                    { kFastRew,       "FastRew"    },
-                    { kPower,         "Power"      },
-                    { kChanUp,        "Channel+"   },
-                    { kChanDn,        "Channel-"   },
-                    { kVolUp,         "Volume+"    },
-                    { kVolDn,         "Volume-"    },
-                    { kMute,          "Mute"       },
-                    { kSchedule,      "Schedule"   },
-                    { kChannels,      "Channels"   },
-                    { kTimers,        "Timers"     },
-                    { kRecordings,    "Recordings" },
-                    { kSetup,         "Setup"      },
-                    { kCommands,      "Commands"   },
-                    { kUser1,         "User1"      },
-                    { kUser2,         "User2"      },
-                    { kUser3,         "User3"      },
-                    { kUser4,         "User4"      },
-                    { kUser5,         "User5"      },
-                    { kUser6,         "User6"      },
-                    { kUser7,         "User7"      },
-                    { kUser8,         "User8"      },
-                    { kUser9,         "User9"      },
-                    { kNone,          NULL         }
+    { kNone,          "none"           },
+    { kUp,            "Key$Up"         },
+    { kDown,          "Key$Down"       },
+    { kMenu,          "Key$Menu"       },
+    { kOk,            "Key$Ok"         },
+    { kBack,          "Key$Back"       },
+    { kLeft,          "Key$Left"       },
+    { kRight,         "Key$Right"      },
+    { kRed,           "Key$Red"        },
+    { kGreen,         "Key$Green"      },
+    { kYellow,        "Key$Yellow"     },
+    { kBlue,          "Key$Blue"       },
+    { k0,             "Key$0"          },
+    { k1,             "Key$1"          },
+    { k2,             "Key$2"          },
+    { k3,             "Key$3"          },
+    { k4,             "Key$4"          },
+    { k5,             "Key$5"          },
+    { k6,             "Key$6"          },
+    { k7,             "Key$7"          },
+    { k8,             "Key$8"          },
+    { k9,             "Key$9"          },
+    { kInfo,          "Key$Info"       },
+    { kPlay,          "Key$Play"       },
+    { kPause,         "Key$Pause"      },
+    { kStop,          "Key$Stop"       },
+    { kRecord,        "Key$Record"     },
+    { kFastFwd,       "Key$FastFwd"    },
+    { kFastRew,       "Key$FastRew"    },
+    { kNext,          "Key$Next"       },
+    { kPrev,          "Key$Prev"       },
+    { kPower,         "Key$Power"      },
+    { kChanUp,        "Key$Channel+"   },
+    { kChanDn,        "Key$Channel-"   },
+    { kChanPrev,      "Key$PrevChannel"},
+    { kVolUp,         "Key$Volume+"    },
+    { kVolDn,         "Key$Volume-"    },
+    { kMute,          "Key$Mute"       },
+    { kAudio,         "Key$Audio"      },
+#if (VDRVERSNUM >= 10510)
+    { kSubtitles,     "Key$Subtitles"  },
+#endif
+    { kSchedule,      "Key$Schedule"   },
+    { kChannels,      "Key$Channels"   },
+    { kTimers,        "Key$Timers"     },
+    { kRecordings,    "Key$Recordings" },
+    { kSetup,         "Key$Setup"      },
+    { kCommands,      "Key$Commands"   },
+    { kUser1,         "Key$User1"      },
+    { kUser2,         "Key$User2"      },
+    { kUser3,         "Key$User3"      },
+    { kUser4,         "Key$User4"      },
+    { kUser5,         "Key$User5"      },
+    { kUser6,         "Key$User6"      },
+    { kUser7,         "Key$User7"      },
+    { kUser8,         "Key$User8"      },
+    { kUser9,         "Key$User9"      },
+    { kNone,          NULL             }
 };
 
 cPowerMateSetupPage::cPowerMateSetupPage()
 {
-	brightness = PowerMateSetup.brightness;
-	sensitivity = PowerMateSetup.sensitivity;
-	usePushedTurns = PowerMateSetup.usePushedTurns;
-	for (numKeys = 0; keyTable[numKeys].name; numKeys++)
-	{
-		if (keyTable[numKeys].type == PowerMateSetup.keyLeft)
-			keyLeft = numKeys;
-		if (keyTable[numKeys].type == PowerMateSetup.keyRight)
-			keyRight = numKeys;
-		if (keyTable[numKeys].type == PowerMateSetup.keyPush)
-			keyPush = numKeys;
-		if (keyTable[numKeys].type == PowerMateSetup.keyPushedLeft)
-			keyPushedLeft = numKeys;
-		if (keyTable[numKeys].type == PowerMateSetup.keyPushedRight)
-			keyPushedRight = numKeys;
-		strKeys[numKeys] = new char[strlen(keyTable[numKeys].name) + 1];
-		strcpy(strKeys[numKeys], keyTable[numKeys].name);
-	}
-	Add(itemBrightness = new cMenuEditIntItem("Brightness", &brightness, 0, 255));
-	Add(new cMenuEditIntItem("Sensitivity", &sensitivity, 1, 10));
-	Add(new cMenuEditBoolItem("Use Pushed Turns", &usePushedTurns));
-	Add(new cMenuEditStraItem("Turn Left", &keyLeft, numKeys, strKeys));
-	Add(new cMenuEditStraItem("Turn Right", &keyRight, numKeys, strKeys));
-	Add(new cMenuEditStraItem("Push Button", &keyPush, numKeys, strKeys));
-	Add(new cMenuEditStraItem("Pushed Turn Left", &keyPushedLeft, numKeys, strKeys));
-	Add(new cMenuEditStraItem("Pushed Turn Right", &keyPushedRight, numKeys, strKeys));
+    context = kContextNormal;
+    contextOld = kContextNormal;
+    brightness = PowerMateSetup.brightness;
+    sensitivity = PowerMateSetup.sensitivity;
+    doubleClickTime = PowerMateSetup.doubleClickTime;
+    for (numKeys = 0; keyTable[numKeys].name; numKeys++)
+    {
+        for (int c = 0; c < kContexts; c++)
+            for (int e = 0; e < kEvents; e++)
+                if (keyTable[numKeys].type == PowerMateSetup.keys[c][e])
+                    keys[c][e] = numKeys;
+        strKeys[numKeys] = trVDR(keyTable[numKeys].name);
+    }
+    for (int c = 0; c < kContexts; c++)
+    {
+        strContexts[c] = tr(kStrContexts[c]);
+    }
+    for (int e = 0; e < kEvents; e++)
+        setKeys[e] = keys[context][e];
+    Add(itemBrightness = new cMenuEditIntItem(tr("Brightness"), &brightness, 0, 255));
+    Add(new cMenuEditIntItem(tr("Sensitivity"), &sensitivity, 1, 10));
+    Add(new cMenuEditIntItem(tr("Double click time (ms)"), &doubleClickTime, 100, 1000));
+    Add(itemContext = new cMenuEditStraItem(tr("Set keys for context"), &context, kContexts, strContexts));
+    Add(new cMenuEditStraItem(tr("Turn Left"), &setKeys[kEventTurnLeft], numKeys, strKeys));
+    Add(new cMenuEditStraItem(tr("Turn Right"), &setKeys[kEventTurnRight], numKeys, strKeys));
+    Add(new cMenuEditStraItem(tr("Pushed Turn Left"), &setKeys[kEventPushedTurnLeft], numKeys, strKeys));
+    Add(new cMenuEditStraItem(tr("Pushed Turn Right"), &setKeys[kEventPushedTurnRight], numKeys, strKeys));
+    Add(new cMenuEditStraItem(tr("Button Click"), &setKeys[kEventClick], numKeys, strKeys));
+    Add(new cMenuEditStraItem(tr("Button Double Click"), &setKeys[kEventDoubleClick], numKeys, strKeys));
 }
 
 cPowerMateSetupPage::~cPowerMateSetupPage()
 {
-	for (int i = 0; i < numKeys; i++)
-	{
-		delete[] strKeys[i];
-	}
 }
 
 void cPowerMateSetupPage::Store()
 {
-	SetupStore("Brightness", PowerMateSetup.brightness = brightness);
-	SetupStore("Sensitivity", PowerMateSetup.sensitivity = sensitivity);
-	SetupStore("UsePushedTurns", PowerMateSetup.usePushedTurns = usePushedTurns);
-	SetupStore("KeyLeft", PowerMateSetup.keyLeft = keyTable[keyLeft].type);
-	SetupStore("KeyRight", PowerMateSetup.keyRight = keyTable[keyRight].type);
-	SetupStore("KeyPush", PowerMateSetup.keyPush = keyTable[keyPush].type);
-	SetupStore("KeyPushedLeft", PowerMateSetup.keyPushedLeft = keyTable[keyPushedLeft].type);
-	SetupStore("KeyPushedRight", PowerMateSetup.keyPushedRight = keyTable[keyPushedRight].type);
+    SetupStore("Brightness", PowerMateSetup.brightness = brightness);
+    SetupStore("Sensitivity", PowerMateSetup.sensitivity = sensitivity);
+    SetupStore("DoubleClickTime", PowerMateSetup.doubleClickTime = doubleClickTime);
+    
+    for (int e = 0; e < kEvents; e++)
+        keys[contextOld][e] = setKeys[e];
+    for (int c = 0; c < kContexts; c++)
+    {
+        for (int e = 0; e < kEvents; e++)
+        {
+            char str[256];
+            PowerMateSetup.keys[c][e] = keyTable[keys[c][e]].type;
+            sprintf(str, "Key%s%s", kStrContexts[c], kStrEvents[e]);
+            SetupStore(str, PowerMateSetup.keys[c][e]);
+        }
+    }
 
-	PowerMate->SetBrightness(brightness);
+    PowerMate->SetBrightness(brightness);
 }
 
 eOSState cPowerMateSetupPage::ProcessKey(eKeys key)
 {
-	eOSState state = cMenuSetupPage::ProcessKey(key);
+    eOSState state = cMenuSetupPage::ProcessKey(key);
 
-	if (state == osContinue)
-	{
-		cOsdItem * item = Get(Current());
-		if (item == itemBrightness)
-		{
-			PowerMate->SetBrightness(brightness);
-		}
-	}
-	return state;
+    if (state == osContinue)
+    {
+        if (key == kLeft || key == kRight)
+        {
+            cOsdItem * item = Get(Current());
+            if (item == itemBrightness)
+            {
+                PowerMate->SetBrightness(brightness);
+            }
+            if (item == itemContext)
+            {
+                for (int e = 0; e < kEvents; e++)
+                {
+                    keys[contextOld][e] = setKeys[e];
+                    setKeys[e] = keys[context][e];
+                    item = Get(Current() + e + 1);
+                    item->Set();
+                }
+                contextOld = context;
+                Display();
+            }
+        }
+    }
+    return state;
 }
 
 cPowerMateSetup PowerMateSetup;

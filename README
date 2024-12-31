@@ -9,22 +9,38 @@ Latest version available at: www.powarman.de/vdr_plugins.htm
 See the file COPYING for license information.
 
 Description:
-This plugin allows using a Griffin PowerMate to control some of VDR's functions
-through the mapping of remote control keyss to PowerMate actions.
+This plugin allows using a Griffin PowerMate to control some of VDR's
+functions through the mapping of remote control keys to PowerMate actions.
+
+Since version 0.0.2 you can specify different key bindings for several
+contexts of VDR (Normal, Menu and Replay).
 
 You can specify the PowerMate's device through command line parameter -d
 (default:/dev/input/event0):
 
   vdr -P'powermate -d /dev/input/event1'
 
-Setup Parameters
-----------------
+Setup menu parameters
+---------------------
 Brightness
-    Sets the brightness of PowerMate's LEDs (0-255)
+  Sets the brightness of PowerMate's LEDs (0-255).
+
 Sensitivity
-    Sets the sensitivity of PowerMate's turning actions (1-10).
-Use Pushed Turns
-    Controls whether the pushed turn events should be used
-Turn Left, Turn Right, Push Button, Pushed Turn Left, Pushed Turn Right
-    The keys that should be triggered at the different events
+  Sets the sensitivity of PowerMate's turning actions (1-10).
+
+Double click time
+  Sets the time in milliseconds between two button clicks to be recognized as
+  a double click.
+
+Context
+  This item is there to choose the current context to specify its key bindings.
+
+Turn Left,
+Turn Right,
+Pushed Turn Left,
+Pushed Turn Right,
+Button Click,
+Button Double Click
+  The keys that should be triggered at the different events in the
+  choosen context.
 
